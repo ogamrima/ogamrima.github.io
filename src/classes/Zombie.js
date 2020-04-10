@@ -1,5 +1,8 @@
 class Zombie extends Phaser.GameObjects.Sprite {
-    constructor(scene, x, y) {
+    constructor(scene) {
+        let x = Phaser.Math.Between(50, scene.w - 50);
+        let y = Phaser.Math.Between(50, scene.h - 50);
+
         super(scene, x, y, "zombie");
         scene.add.existing(this);
         scene.physics.world.enableBody(this);

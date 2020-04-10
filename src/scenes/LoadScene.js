@@ -8,7 +8,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image("background", "./assets/map2.png");
     this.load.image("player", "./assets/player.png");
     this.load.image("bullet", "./assets/red.png");
-    this.load.image("blast", "./assets/laser.png");
+    this.load.image("blast", "./assets/blast.png");
     this.load.spritesheet("zombie", "./assets/zombie.png", {
       frameWidth: 288,
       frameHeight: 311,
