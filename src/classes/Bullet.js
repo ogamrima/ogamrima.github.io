@@ -14,8 +14,8 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
   fire(player) {
     this.setRotation(player.rotation);
 
-    this.x = player.x + (70 * Math.cos(this.rotation));
-    this.y = player.y + (70 * Math.sin(this.rotation));
+    this.x = player.x + (60 * Math.cos(this.rotation));
+    this.y = player.y + (60 * Math.sin(this.rotation));
 
     this.setVelocityX(this.speed * Math.cos(Math.PI * this.angle / 180));
     this.setVelocityY(this.speed * Math.sin(Math.PI * this.angle / 180));
