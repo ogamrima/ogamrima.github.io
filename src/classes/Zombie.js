@@ -24,7 +24,7 @@ class Zombie extends Phaser.GameObjects.Sprite {
         this.play("zombie_anim", true);
         this.setScale(0.25);
         this.speed = Phaser.Math.Between(100, 350);
-        this.health = 300 + scene.round * 3;
+        this.health = 500 + scene.round * 5;
     }
     update() {
         this.rotation = Phaser.Math.Angle.Between(
