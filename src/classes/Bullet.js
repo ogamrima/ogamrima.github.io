@@ -3,6 +3,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     super(scene, x, y, "blast");
     this.born = 0;
     this.speed = 1500;
+    this.piercedThrough = 0;
 
   }
 

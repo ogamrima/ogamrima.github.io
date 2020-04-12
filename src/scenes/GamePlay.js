@@ -15,7 +15,15 @@ class GamePlay extends Phaser.Scene {
     this.damage = 100;
     this.gameOver = false;
     this.fireRate = 50;
-    this.magazine = 10;
+    this.magazine = 20;
+    this.maxZombies = 24;
+    this.zombiesInRound = 5; //formula: (round*0.15)*maxZombies, for rounds 1-4 the same formula*(0.2*round)
+    this.zombiesSpawned = 0;
+    this.zombiesKilled = 0;
+    this.zombieHealth = 150;
+    this.bulletsMaxSize = 30;
+    this.zombieSpawnRate = 250;
+    this.lastZombieSpawned = 0;
   }
   preload() {}
   create() {
@@ -25,14 +33,15 @@ class GamePlay extends Phaser.Scene {
       .setScale(0.25);
     this.bullets = this.physics.add.group({
       classType: Bullet,
-      maxSize: this.magazine,
+      maxSize: this.bulletsMaxSize,
       runChildUpdate: true
     });
     this.zombies = this.physics.add.group({
       classType: Zombie,
+      maxSize: this.maxZombies,
       runChildUpdate: true,
     });
-    this.txt = this.add.text(
+    this.debugger = this.add.text(
       -350, -250,
       "", {
         font: "25px Arial",
@@ -56,7 +65,7 @@ class GamePlay extends Phaser.Scene {
     //this.input.setPollAlways();
     this.mouse = this.input.activePointer;
 
-    this.addZombies(30);
+    //this.addZombies(this.zombiesInRound);
     this.physics.add.collider(this.zombies);
     this.physics.add.collider(
       this.bullets,
@@ -112,24 +121,59 @@ class GamePlay extends Phaser.Scene {
       }
     });
     this.game.canvas.oncontextmenu = (e) => e.preventDefault();
+    this.input.keyboard.on('keydown', e => {
+      this.player.body.velocity.normalize().scale(this.speed);
+    });
+    this.input.keyboard.on('keyup', e => {
+      this.player.body.velocity.normalize().scale(this.speed);
+    });
   }
 
   shoot() {
+
     let bullet = this.bullets.get();
     if (bullet)
       bullet.fire(this.player);
+
+  }
+
+  zombieQueue() {
+
   }
 
   zombieHit(bullet, zombie) {
     if (bullet.active && zombie.active) {
-      bullet.destroy();
+      bullet.piercedThrough++;
+      if (bullet.piercedThrough > 2)
+        bullet.destroy();
       zombie.health -= this.damage;
     }
   }
 
   addZombies(count) {
     for (let i = 0; i < count; i++) {
-      this.zombies.get().setActive(true).setVisible(true);
+      let x, y;
+      let m = Math.random();
+      if (m <= 0.25) {
+        x = Phaser.Math.Between(50, this.w - 50);
+        y = Phaser.Math.Between(50, 200);
+      } else if (m > 0.25 && m <= 0.5) {
+        x = Phaser.Math.Between(50, this.w - 50);
+        y = Phaser.Math.Between(this.h - 200, this.h - 50);
+      } else if (m > 0.5 && m <= 0.75) {
+        x = Phaser.Math.Between(50, 200);
+        y = Phaser.Math.Between(50, this.h - 50);
+      } else {
+        x = Phaser.Math.Between(this.w - 200, this.w - 50);
+        y = Phaser.Math.Between(50, this.h - 50);
+      }
+      let speed = Phaser.Math.Between(50, 350);
+      let zombie = this.zombies.get(x, y, speed, this.zombieHealth);
+      if (zombie) {
+        this.zombiesSpawned++;
+        zombie.activate()
+      }
+
     }
   }
 
@@ -149,7 +193,23 @@ class GamePlay extends Phaser.Scene {
       this.shoot();
       this.lastFired = time + this.fireRate;
     }
-    this.player.body.velocity.normalize().scale(this.speed);
-    this.txt.text = this.player.body.speed;
+    if (time > this.lastZombieSpawned) {
+      if (this.zombiesKilled >= this.zombiesInRound) {
+        this.round++;
+        this.zombiesSpawned = 0;
+        this.zombiesKilled = 0;
+        this.zombiesInRound = (this.round * 0.15) * this.maxZombies * ((this.round < 5) ? 0.2 : 1);
+        this.zombieHealth = this.round < 10 ? this.zombieHealth + 100 : this.zombieHealth * 1.1;
+        this.roundText.text = this.round;
+      } else {
+        if (this.zombiesSpawned < this.zombiesInRound) {
+          this.addZombies(1);
+          this.lastZombieSpawned = time + this.zombieSpawnRate;
+        }
+
+      }
+
+    }
+    this.debugger.text = this.zombies.countActive() + ", " + this.zombieHealth;
   }
 }

@@ -1,0 +1,6 @@
+12/4/2020
+- on new round update this.zombieHealth;
+- use the same method as lastFired for zombie spawns;
+- add tile map with obstacles
+- spawn 1 zombie every 0.25s while there are not 24 zombies at the moment
+- add gameOver state
