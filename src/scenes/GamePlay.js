@@ -12,25 +12,31 @@ class GamePlay extends Phaser.Scene {
     this.mouseX = 0;
     this.mouseY = 0;
     this.round = 1;
-    this.damage = 100;
+    this.lives = 3;
+    this.score = 0;
+    this.scoreText = null;
     this.gameOver = false;
     this.fireRate = 50;
     this.magazine = 20;
     this.maxZombies = 24;
-    this.zombiesInRound = 5; //formula: (round*0.15)*maxZombies, for rounds 1-4 the same formula*(0.2*round)
+    this.zombiesInRound = 5;
     this.zombiesSpawned = 0;
     this.zombiesKilled = 0;
     this.zombieHealth = 150;
     this.bulletsMaxSize = 30;
-    this.zombieSpawnRate = 250;
+    this.zombieSpawnRate = 500;
     this.lastZombieSpawned = 0;
+    this.timesGotHit = 0;
+    this.atomBombs = 0;
+    this.flashes = 0;
+    this.debugger = null;
+
   }
   preload() {}
   create() {
+
     this.background = this.add.image(this.w / 2, this.h / 2, "background");
-    this.player = this.physics.add
-      .sprite(this.w / 2, this.h / 2, "player")
-      .setScale(0.25);
+    this.player = new Player(this, this.w / 2, this.h / 2, "player", 200, 400);
     this.bullets = this.physics.add.group({
       classType: Bullet,
       maxSize: this.bulletsMaxSize,
@@ -48,24 +54,23 @@ class GamePlay extends Phaser.Scene {
         fill: "yellow",
       }
     ).setScrollFactor(0, 0);
-
     this.roundText = this.add.text(-350, 800, this.round, {
       font: "50px Arial",
       fill: "red"
     }).setScrollFactor(0, 0);
+    this.mouse = this.input.activePointer;
+    this.moveKeys = this.input.keyboard.addKeys({
+      up: Phaser.Input.Keyboard.KeyCodes.W,
+      down: Phaser.Input.Keyboard.KeyCodes.S,
+      left: Phaser.Input.Keyboard.KeyCodes.A,
+      right: Phaser.Input.Keyboard.KeyCodes.D,
+    });
 
-    //this.player.play("player_anim", true);
-
-    this.player.setCollideWorldBounds();
     this.physics.world.setBounds(0, 0, this.w, this.h);
     this.cameras.main.zoom = 0.5;
     this.cameras.main.startFollow(this.player, true);
     this.cameras.main.setBounds(0, 0, this.w, this.h);
 
-    //this.input.setPollAlways();
-    this.mouse = this.input.activePointer;
-
-    //this.addZombies(this.zombiesInRound);
     this.physics.add.collider(this.zombies);
     this.physics.add.collider(
       this.bullets,
@@ -74,59 +79,8 @@ class GamePlay extends Phaser.Scene {
       null,
       this
     );
-
-
-    this.moveKeys = this.input.keyboard.addKeys({
-      up: Phaser.Input.Keyboard.KeyCodes.W,
-      down: Phaser.Input.Keyboard.KeyCodes.S,
-      left: Phaser.Input.Keyboard.KeyCodes.A,
-      right: Phaser.Input.Keyboard.KeyCodes.D,
-    });
-
-    this.input.keyboard.on("keydown_W", (e) => {
-      //if (this.moveKeys["down"].isUp)
-      this.player.setVelocityY(-this.speed);
-    });
-    this.input.keyboard.on("keydown_S", (e) => {
-      //if (this.moveKeys["up"].isUp)
-      this.player.setVelocityY(this.speed);
-    });
-    this.input.keyboard.on("keydown_A", (e) => {
-      //if (this.moveKeys["right"].isUp)
-      this.player.setVelocityX(-this.speed);
-    });
-    this.input.keyboard.on("keydown_D", (e) => {
-      //if (this.moveKeys["left"].isUp)
-      this.player.setVelocityX(this.speed);
-    });
-
-    this.input.keyboard.on("keyup_W", (e) => {
-      if (this.moveKeys["down"].isUp) {
-        this.player.setVelocityY(0);
-      }
-    });
-    this.input.keyboard.on("keyup_S", (e) => {
-      if (this.moveKeys["up"].isUp) {
-        this.player.setVelocityY(0);
-      }
-    });
-    this.input.keyboard.on("keyup_A", (e) => {
-      if (this.moveKeys["right"].isUp) {
-        this.player.setVelocityX(0);
-      }
-    });
-    this.input.keyboard.on("keyup_D", (e) => {
-      if (this.moveKeys["left"].isUp) {
-        this.player.setVelocityX(0);
-      }
-    });
+    this.physics.add.collider(this.player, this.zombies, this.playerGotHit, null, this);
     this.game.canvas.oncontextmenu = (e) => e.preventDefault();
-    this.input.keyboard.on('keydown', e => {
-      this.player.body.velocity.normalize().scale(this.speed);
-    });
-    this.input.keyboard.on('keyup', e => {
-      this.player.body.velocity.normalize().scale(this.speed);
-    });
   }
 
   shoot() {
@@ -136,6 +90,9 @@ class GamePlay extends Phaser.Scene {
       bullet.fire(this.player);
 
   }
+  playerGotHit() {
+    this.timesGotHit++;
+  }
 
   zombieQueue() {
 
@@ -143,10 +100,10 @@ class GamePlay extends Phaser.Scene {
 
   zombieHit(bullet, zombie) {
     if (bullet.active && zombie.active) {
-      bullet.piercedThrough++;
-      if (bullet.piercedThrough > 2)
-        bullet.destroy();
-      zombie.health -= this.damage;
+      //bullet.piercedThrough++;
+      //if (bullet.piercedThrough > 2)
+      bullet.destroy(true);
+      zombie.health -= this.player.damage;
     }
   }
 
@@ -155,19 +112,19 @@ class GamePlay extends Phaser.Scene {
       let x, y;
       let m = Math.random();
       if (m <= 0.25) {
-        x = Phaser.Math.Between(50, this.w - 50);
-        y = Phaser.Math.Between(50, 200);
+        x = Phaser.Math.Between(0, this.w);
+        y = Phaser.Math.Between(0, 50);
       } else if (m > 0.25 && m <= 0.5) {
-        x = Phaser.Math.Between(50, this.w - 50);
-        y = Phaser.Math.Between(this.h - 200, this.h - 50);
+        x = Phaser.Math.Between(0, this.w);
+        y = Phaser.Math.Between(this.h - 50, this.h);
       } else if (m > 0.5 && m <= 0.75) {
-        x = Phaser.Math.Between(50, 200);
-        y = Phaser.Math.Between(50, this.h - 50);
+        x = Phaser.Math.Between(0, 50);
+        y = Phaser.Math.Between(0, this.h);
       } else {
-        x = Phaser.Math.Between(this.w - 200, this.w - 50);
-        y = Phaser.Math.Between(50, this.h - 50);
+        x = Phaser.Math.Between(this.w - 50, this.w);
+        y = Phaser.Math.Between(0, this.h);
       }
-      let speed = Phaser.Math.Between(50, 350);
+      let speed = Phaser.Math.Between(75, 300);
       let zombie = this.zombies.get(x, y, speed, this.zombieHealth);
       if (zombie) {
         this.zombiesSpawned++;
@@ -178,6 +135,19 @@ class GamePlay extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this.player.setVelocity(0);
+    if (this.moveKeys["up"].isDown && this.moveKeys["down"].isUp) {
+      this.player.setVelocityY(-this.speed);
+    }
+    if (this.moveKeys["down"].isDown && this.moveKeys["up"].isUp) {
+      this.player.setVelocityY(this.speed);
+    }
+    if (this.moveKeys["left"].isDown && this.moveKeys["right"].isUp) {
+      this.player.setVelocityX(-this.speed);
+    }
+    if (this.moveKeys["right"].isDown && this.moveKeys["left"].isUp) {
+      this.player.setVelocityX(this.speed);
+    }
     this.input.activePointer.updateWorldPoint(this.cameras.main);
     this.mouseX = this.input.activePointer.worldX;
     this.mouseY = this.input.activePointer.worldY;
@@ -198,9 +168,10 @@ class GamePlay extends Phaser.Scene {
         this.round++;
         this.zombiesSpawned = 0;
         this.zombiesKilled = 0;
-        this.zombiesInRound = (this.round * 0.15) * this.maxZombies * ((this.round < 5) ? 0.2 : 1);
+        this.zombiesInRound = Math.round((this.round * 0.15) * this.maxZombies);
         this.zombieHealth = this.round < 10 ? this.zombieHealth + 100 : this.zombieHealth * 1.1;
         this.roundText.text = this.round;
+        this.lastZombieSpawned = time + 5000;
       } else {
         if (this.zombiesSpawned < this.zombiesInRound) {
           this.addZombies(1);
@@ -210,6 +181,7 @@ class GamePlay extends Phaser.Scene {
       }
 
     }
-    this.debugger.text = this.zombies.countActive() + ", " + this.zombieHealth;
+    this.player.body.velocity.normalize().scale(this.speed);
+    this.debugger.text = this.zombies.countActive() + ", " + this.zombieHealth + ", " + this.zombiesInRound + ", " + this.timesGotHit;
   }
 }
