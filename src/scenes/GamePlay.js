@@ -24,7 +24,8 @@ class GamePlay extends Phaser.Scene {
     this.zombiesKilled = 0;
     this.zombieHealth = 150;
     this.bulletsMaxSize = 30;
-    this.zombieSpawnRate = 500;
+    this.pierceableNumber = 3;
+    this.zombieSpawnRate = 1000;
     this.lastZombieSpawned = 0;
     this.timesGotHit = 0;
     this.atomBombs = 0;
@@ -100,10 +101,11 @@ class GamePlay extends Phaser.Scene {
 
   zombieHit(bullet, zombie) {
     if (bullet.active && zombie.active) {
-      //bullet.piercedThrough++;
-      //if (bullet.piercedThrough > 2)
-      bullet.destroy(true);
       zombie.health -= this.player.damage;
+      bullet.setVisible(false);
+      bullet.piercedThrough++;
+      if (bullet.piercedThrough > this.pierceableNumber)
+        bullet.destroy(true);
     }
   }
 

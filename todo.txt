@@ -1,14 +1,32 @@
 2020
 
 12/4
-- on new round update this.zombieHealth;
-- use the same method as lastFired for zombie spawns;
-- add tile map with obstacles
-- spawn 1 zombie every 0.25s while there are not 24 zombies at the moment
-- add gameOver state
+- on new round update this.zombieHealth; DONE
+- use the same method as lastFired for zombie spawns; DONE
+- add tile map with obstacles;
+- spawn 1 zombie every 0.25s while there are not 24 zombies at the moment; DONE
+- add gameOver state;
 
 13/4
-- add power-ups
-- add performance-friendly piercing through zombies
-- add score label, atom bombs count, flashes count (teleporting) 
-- set tint and thickness for powered up gun bullets
+- add power-ups;
+- add performance-friendly piercing through zombies;
+- add score label, atom bombs count, flashes count (teleporting);
+- set tint and thickness for powered up gun bullets;
+- check fps;
+- take damage when the player and a zombie collide for 1s;
+- fix bullets not hiting enemies when they are spawned in zombie body;
+
+17/4
+- add GameOverScene;
+
+19/4
+- make OptionsScene;
+
+20/4
+- add sound to everything (menu, buttons, shooting, etc.);
+- optimize graphics by using sprite atlases (texturepacker) and image compression;
+- also maybe add setImmovable if the zombies shouldnt push the player;
+
+22/4
+- make bullets go through zombies and hit multiple before bullet gets destroyed; DONE
+- get a nice tile set;

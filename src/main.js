@@ -1,5 +1,7 @@
 /** @type{import("../typings/phaser")} */
 
+let msg = "Ahooj";
+
 let config = {
   type: Phaser.AUTO,
   width: 800,
@@ -8,11 +10,13 @@ let config = {
   physics: {
     default: "arcade",
     arcade: {
-      gravity: { y: 0 },
+      gravity: {
+        y: 0
+      },
       debug: true,
     },
   },
-  scene: [LoadScene, MenuScene, GamePlay],
+  scene: [LoadScene, MenuScene, OptionsScene, GamePlay, GameOverScene]
 };
 
 let game = new Phaser.Game(config);

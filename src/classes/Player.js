@@ -6,6 +6,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.setCollideWorldBounds();
         this.setScale(0.25);
         this.setOrigin(0.4, 0.45);
+        this.setImmovable();
         this.body.setCircle(70, 50, 20);
         //this.play("player_anim", true);
         this.health = health;
