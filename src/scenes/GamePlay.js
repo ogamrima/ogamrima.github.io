@@ -14,7 +14,17 @@ class GamePlay extends Phaser.Scene {
     this.round = 1;
     this.lives = 3;
     this.score = 0;
-    this.scoreText = null;
+    this.multiplier = 1;
+    this.weaponMultiplier = 1;
+    this.multiplierValue = 0;
+    this.multiplierBox = null;
+    this.multiplierBar = null;
+    this.scoreLabel = null;
+    this.flashesLabel = null;
+    this.atomsLabel = null;
+    this.livesLabel = null;
+    this.multiplierLabel = null;
+    this.roundLabel = null;
     this.gameOver = false;
     this.fireRate = 50;
     this.magazine = 20;
@@ -49,16 +59,48 @@ class GamePlay extends Phaser.Scene {
       runChildUpdate: true,
     });
     this.debugger = this.add.text(
-      -350, -250,
+      350, -250,
       "", {
         font: "25px Arial",
         fill: "yellow",
       }
     ).setScrollFactor(0, 0);
-    this.roundText = this.add.text(-350, 800, this.round, {
+    this.roundLabel = this.add.text(-350, 800, this.round, {
       font: "50px Arial",
       fill: "red"
     }).setScrollFactor(0, 0);
+    this.styleConfig = {
+      fontSize: "25px",
+      fontFamily: "Tahoma",
+      color: "#ffffff"
+    }
+    /*this.styleConfig = {
+      font: "25px Tahoma",
+      fill: "white"
+    }*/
+
+    this.livesLabel = this.add.text(-375, -275, this.lives, this.styleConfig).setScrollFactor(0, 0);
+    this.atomsLabel = this.add.text(-300, -275, this.atomBombs, this.styleConfig).setScrollFactor(0, 0);
+    this.flashesLabel = this.add.text(-225, -275, this.flashes, this.styleConfig).setScrollFactor(0, 0);
+    this.scoreLabel = this.add.text(-150, -275, this.score, this.styleConfig).setScrollFactor(0, 0);
+    this.multiplierLabel = this.add.text(-85, -210, this.multiplier + "x", this.styleConfig).setScrollFactor(0, 0);
+    this.add.image(-340, -258, "life").setScale(0.125).setAlpha(0.9).setScrollFactor(0, 0);
+    this.add.image(-265, -258, "atom").setScale(0.04).setAlpha(0.9).setScrollFactor(0, 0);
+    this.add.image(-190, -258, "flash").setScale(0.05).setAlpha(0.9) /*.setTint(0x0fffff)*/ .setScrollFactor(0, 0);
+    this.multiplierBox = this.add.graphics({
+      fillStyle: {
+        color: 0x222222,
+        alpha: 0.3
+      }
+    }).setScrollFactor(0, 0);
+    this.multiplierBox.fillRect(-380, -200, 280, 10);
+    this.multiplierBar = this.add.graphics({
+      fillStyle: {
+        color: "#ffffff"
+      }
+    }).setScrollFactor(0, 0);
+
+
     this.mouse = this.input.activePointer;
     this.moveKeys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -107,6 +149,17 @@ class GamePlay extends Phaser.Scene {
       if (bullet.piercedThrough > this.pierceableNumber)
         bullet.destroy(true);
     }
+  }
+
+  multiplierChange(bar) {
+    if (this.multiplierValue > 1) {
+      this.multiplier++;
+      this.multiplierLabel.text = this.multiplier + "x";
+      this.multiplierValue = this.multiplierValue - 1;
+    }
+    bar.clear();
+    bar.fillStyle(0xffffff, 1);
+    bar.fillRect(-380, -200, 280 * this.multiplierValue, 10);
   }
 
   addZombies(count) {
@@ -171,8 +224,8 @@ class GamePlay extends Phaser.Scene {
         this.zombiesSpawned = 0;
         this.zombiesKilled = 0;
         this.zombiesInRound = Math.round((this.round * 0.15) * this.maxZombies);
-        this.zombieHealth = this.round < 10 ? this.zombieHealth + 100 : this.zombieHealth * 1.1;
-        this.roundText.text = this.round;
+        this.zombieHealth = this.round < 10 ? this.zombieHealth + 100 : Math.round(this.zombieHealth * 1.1);
+        this.roundLabel.text = this.round;
         this.lastZombieSpawned = time + 5000;
       } else {
         if (this.zombiesSpawned < this.zombiesInRound) {
@@ -185,5 +238,6 @@ class GamePlay extends Phaser.Scene {
     }
     this.player.body.velocity.normalize().scale(this.speed);
     this.debugger.text = this.zombies.countActive() + ", " + this.zombieHealth + ", " + this.zombiesInRound + ", " + this.timesGotHit;
+
   }
 }

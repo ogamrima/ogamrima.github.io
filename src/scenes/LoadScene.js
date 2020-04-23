@@ -18,6 +18,9 @@ class LoadScene extends Phaser.Scene {
       frameWidth: 288,
       frameHeight: 311,
     });
+    this.load.image("life", "./assets/life.png");
+    this.load.image("atom", "./assets/atom.png");
+    this.load.image("flash", "./assets/flash.png");
 
     let loadingBar = this.add.graphics({
       fillStyle: {
@@ -49,7 +52,6 @@ class LoadScene extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
-    console.log(msg);
     this.scene.start("MenuScene");
   }
 }

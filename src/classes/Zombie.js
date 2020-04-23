@@ -9,6 +9,7 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         this.body.setSize(130, 130).setOffset(80, 90);
         this.speed = speed;
         this.health = health;
+        //this.setBounce(0);
     }
 
     activate() {
@@ -30,7 +31,10 @@ class Zombie extends Phaser.Physics.Arcade.Sprite {
         );
         if (this.health < 0) {
             this.scene.zombiesKilled++;
+            this.scene.score += (100 * this.scene.multiplier * this.scene.weaponMultiplier);
+            this.scene.scoreLabel.text = this.scene.score;
             this.destroy();
+
 
         }
     }

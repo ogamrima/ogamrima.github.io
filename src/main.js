@@ -1,7 +1,5 @@
 /** @type{import("../typings/phaser")} */
 
-let msg = "Ahooj";
-
 let config = {
   type: Phaser.AUTO,
   width: 800,
