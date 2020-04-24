@@ -13,7 +13,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
     this.setVisible(true);
     this.setRotation(player.rotation);
     this.setImmovable();
-
+    //this.body.setSize(30, 30);
     this.x = player.x + (70 * Math.cos(this.rotation));
     this.y = player.y + (70 * Math.sin(this.rotation));
 
@@ -25,7 +25,7 @@ class Bullet extends Phaser.Physics.Arcade.Sprite {
 
   update(time, delta) {
     this.born += delta;
-    if (this.born > 1500) {
+    if (this.born > 1200) {
       /*this.setActive(false);
       this.setVisible(false);*/
       this.destroy(true);

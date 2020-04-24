@@ -4,13 +4,13 @@
 - on new round update this.zombieHealth; DONE
 - use the same method as lastFired for zombie spawns; DONE
 - add tile map with obstacles;
-- spawn 1 zombie every {spawntim}seconds while there are not 24 zombies at the moment; DONE
+- spawn 1 zombie every {spawntime}seconds while there are not 24 zombies at the moment; DONE
 - add gameOver state;
 
 13/4
 - add power-ups;
 - add performance-friendly piercing through zombies; DONE
-- add score label, atom bombs count, flashes count (teleporting);
+- add score label, atom bombs count, flashes count (teleporting); DONE
 - set tint and thickness for powered up gun bullets;
 - check fps;
 - take damage when the player and a zombie collide for 1s;
@@ -25,7 +25,7 @@
 20/4
 - add sound to everything (menu, buttons, shooting, etc.);
 - optimize graphics by using sprite atlases (texturepacker) and image compression;
-- also maybe add setImmovable if the zombies shouldnt push the player;
+- also maybe add setImmovable if the zombies shouldnt push the player; DONE
 
 22/4
 - make bullets go through zombies and hit multiple before bullet gets destroyed; DONE
@@ -35,5 +35,12 @@
 - add mulitplier bar; DONE
 - increase mulitplier value and call the multiplierChange() function when taking a multiplier pick-up;
 - change weaponMultiplier when different gun is used;
-- update lives, atoms, flashes labels ONLY when picking up such power-up or when dying (livesLabel)
-- fix the bug, where zombies are getting hit with the same bullet multiple times
+- update lives, atoms, flashes labels ONLY when picking up such power-up or when dying (livesLabel); DONE
+- fix the bug, where zombies are getting hit with the same bullet multiple times;
+
+24/4
+- reset multiplier when player dies; DONE
+- make gems at random size (the bigger, the better for score, multiplier etc.)
+- make player die from one hit from zombies
+- add multiple levels
+- use time events for spawning and all kind of stuff

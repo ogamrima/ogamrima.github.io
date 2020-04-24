@@ -18,6 +18,17 @@ class LoadScene extends Phaser.Scene {
       frameWidth: 288,
       frameHeight: 311,
     });
+    this.colors = ["blue", "green", "grey", "yellow", "orange", "pink"];
+    for (let i = 0; i < this.colors.length; i++) {
+      this.load.spritesheet(this.colors[i] + "_gemss", "./assets/crystal-qubodup-ccby3-32-" + this.colors[i] + ".png", {
+        frameWidth: 32,
+        frameHeight: 32
+      });
+    }
+    this.load.image("red", "./assets/red.png");
+    this.load.image("violet", "./assets/violet.png");
+    this.load.image("light_blue", "./assets/light_blue.png");
+    this.load.image("light_green", "./assets/light_green.png");
     this.load.image("life", "./assets/life.png");
     this.load.image("atom", "./assets/atom.png");
     this.load.image("flash", "./assets/flash.png");
@@ -52,6 +63,14 @@ class LoadScene extends Phaser.Scene {
       frameRate: 5,
       repeat: -1,
     });
+    for (let i = 0; i < this.colors.length; i++) {
+      this.anims.create({
+        key: this.colors[i] + "_gem_anim",
+        frames: this.anims.generateFrameNumbers(this.colors[i] + "_gems"),
+        frameRate: 5,
+        repeat: -1
+      })
+    }
     this.scene.start("MenuScene");
   }
 }
