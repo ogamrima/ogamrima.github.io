@@ -28,7 +28,9 @@ class MenuScene extends Phaser.Scene {
 
     })
     playButton.on("pointerup", () => {
-      this.scene.start("GamePlay");
+      this.scene.start("GamePlay", {
+        timeBefore: this.time.now
+      });
     })
 
 

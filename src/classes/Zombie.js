@@ -1,5 +1,6 @@
 class Zombie extends Phaser.Physics.Arcade.Sprite {
     constructor(scene, x, y, speed, health) {
+        console.log(x, y, speed, health);
         super(scene, x, y, "zombie");
         scene.add.existing(this);
         scene.physics.world.enableBody(this);

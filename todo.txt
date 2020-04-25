@@ -5,19 +5,19 @@
 - use the same method as lastFired for zombie spawns; DONE
 - add tile map with obstacles;
 - spawn 1 zombie every {spawntime}seconds while there are not 24 zombies at the moment; DONE
-- add gameOver state;
+- add gameOver state; DONE
 
 13/4
-- add power-ups;
-- add performance-friendly piercing through zombies; DONE
-- add score label, atom bombs count, flashes count (teleporting); DONE
+- add power ups;
+- add performance friendly piercing through zombies; DONE
+- add score label, nuke count, dashes count (teleporting); DONE
 - set tint and thickness for powered up gun bullets;
 - check fps;
 - take damage when the player and a zombie collide for 1s;
 - fix bullets not hiting enemies when they are spawned in zombie body;
 
 17/4
-- add GameOverScene;
+- add GameOverScene; DONE
 
 19/4
 - make OptionsScene;
@@ -25,7 +25,7 @@
 20/4
 - add sound to everything (menu, buttons, shooting, etc.);
 - optimize graphics by using sprite atlases (texturepacker) and image compression;
-- also maybe add setImmovable if the zombies shouldnt push the player; DONE
+- also maybe add setImmovable if the zombies shouldnt push the player; TRIED
 
 22/4
 - make bullets go through zombies and hit multiple before bullet gets destroyed; DONE
@@ -33,14 +33,26 @@
 
 23/4
 - add mulitplier bar; DONE
-- increase mulitplier value and call the multiplierChange() function when taking a multiplier pick-up;
+- increase multiplier value and call the multiplierChange() function when taking a multiplier pick up; DONE
 - change weaponMultiplier when different gun is used;
-- update lives, atoms, flashes labels ONLY when picking up such power-up or when dying (livesLabel); DONE
+- update lives, nukes, dashes labels ONLY when picking up such power up or when dying (livesLabel); DONE
 - fix the bug, where zombies are getting hit with the same bullet multiple times;
 
 24/4
 - reset multiplier when player dies; DONE
-- make gems at random size (the bigger, the better for score, multiplier etc.)
-- make player die from one hit from zombies
-- add multiple levels
-- use time events for spawning and all kind of stuff
+- make gems at random size (the bigger, the better for score, multiplier etc.); DONE
+- make player die from one hit from zombies; DONE
+- add multiple levels;
+- use time events for spawning and all kind of stuff; TRIED
+
+25/4
+- bullets are spawning at 0,0 (probably correct);
+- multiplier, nukes, lives, dashes wont pass 10x;
+- every 200000 points adds 1 life;
+- remove unnecessary variables;
+- add a 0.01 chance a zombie will drop a life on random location on map;
+- add a room with permanent power up choice (new better gun, faster movement, companion that helps you);
+- when colliding with a zombie, make him swing (which will kill the player, if still colliding);
+- add different zombies;
+- add a mini boss, which spawns once every five rounds after round 10, he will drop gems;
+- convert the time at gameOverScene to hours:minutes:seconds and pad start it;

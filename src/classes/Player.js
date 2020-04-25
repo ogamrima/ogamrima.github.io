@@ -10,7 +10,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.body.setCircle(50, 50, 20);
         //this.play("player_anim", true);
         this.health = health;
-        this.damage = 50;
+        this.damage = 100;
         this.dead = false;
         this.speed = speed;
     }
