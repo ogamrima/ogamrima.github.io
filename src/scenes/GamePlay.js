@@ -14,6 +14,7 @@ class GamePlay extends Phaser.Scene {
     this.bullets = null;
     this.treasures = null;
     this.gems = null;
+    this.supplies = null;
 
     this.round = 1;
     this.lives = 3;
@@ -24,7 +25,6 @@ class GamePlay extends Phaser.Scene {
     this.gameOver = false;
     this.multiplier = 1;
     this.weaponMultiplier = 1;
-    this.multiplierValue = 0;
     this.multiplierBox = null;
     this.multiplierBar = null;
 
@@ -43,7 +43,7 @@ class GamePlay extends Phaser.Scene {
     this.maxZombies = 24;
     this.zombiesInRound = 1;
     this.zombiesSpawned = 0;
-    this.zombiesKilled = 0;
+    this.enemiesKilled = 0;
     this.zombieHealth = 150;
     this.bulletsMaxSize = 30;
     this.pierceableNumber = 3;
@@ -227,7 +227,6 @@ class GamePlay extends Phaser.Scene {
     player.alpha = 0.5;
     this.multiplier = 1;
     this.multiplierLabel.text = "1x";
-    this.multiplierValue = 0;
     this.multiplierChange();
     this.time.addEvent({
       delay: 2000,
@@ -245,22 +244,35 @@ class GamePlay extends Phaser.Scene {
   }
 
   treasurePick(player, treasure) {
-    this.score += treasure.value * this.multiplier;
-    this.scoreLabel.text = this.score;
-    this.multiplierValue += treasure.value / 40000;
-    this.multiplierChange();
-    treasure.destroy(true);
+    treasure.pick(this.multiplier);
   }
 
   gemPick(player, gem) {
-    this.multiplierValue += gem.value;
-    this.multiplierChange();
-    gem.destroy(true);
+    gem.pick();
   }
 
   zombieHit(bullet, zombie) {
     if (bullet.active && zombie.active) {
       zombie.health -= this.player.damage;
+      if (zombie.health < 0) {
+        this.enemiesKilled++;
+        this.kills++;
+        this.score += 100 * Math.floor(this.multiplier) * this.weaponMultiplier;
+        this.scoreLabel.text = this.score;
+        zombie.destroy();
+        if (Math.random() > 0.95) {
+          for (let i = 0; i < Phaser.Math.Between(0, 5); i++) {
+            let treasure = this.treasures.get(
+              Phaser.Math.Between(1200, 2000),
+              Phaser.Math.Between(900, 1500),
+              Phaser.Math.Between(0, 3)
+            );
+            if (treasure) {
+              treasure.activate();
+            }
+          }
+        }
+      }
       bullet.setVisible(false);
       bullet.piercedThrough++;
       if (bullet.piercedThrough > this.pierceableNumber) bullet.destroy(true);
@@ -268,14 +280,15 @@ class GamePlay extends Phaser.Scene {
   }
 
   multiplierChange() {
-    if (this.multiplierValue >= 1) {
-      this.multiplier++;
-      this.multiplierLabel.text = this.multiplier + "x";
-      this.multiplierValue -= 1;
+    if (this.multiplier >= 10) {
+      this.multiplier = 9.999;
     }
+    let decV = (this.multiplier % 1).toFixed(4);
+    let intV = Math.floor(this.multiplier);
+    this.multiplierLabel.text = intV + "x";
     this.multiplierBar.clear();
     this.multiplierBar.fillStyle(0xffffff, 1);
-    this.multiplierBar.fillRect(-380, -230, 280 * this.multiplierValue, 10);
+    this.multiplierBar.fillRect(-380, -230, 280 * decV, 10);
   }
 
   addZombies(count) {
@@ -296,10 +309,10 @@ class GamePlay extends Phaser.Scene {
         y = Phaser.Math.Between(0, this.h);
       }
       let speed = Phaser.Math.Between(100, 275);
-      let zombie = this.zombies.get(x, y, speed, this.zombieHealth);
+      let zombie = this.zombies.get(x, y);
       if (zombie) {
         this.zombiesSpawned++;
-        zombie.activate();
+        zombie.activate(speed, this.zombieHealth);
       }
     }
   }
@@ -334,11 +347,11 @@ class GamePlay extends Phaser.Scene {
     );
 
     if (time > this.lastSpawn) {
-      if (this.zombiesKilled >= this.zombiesInRound) {
+      if (this.enemiesKilled >= this.zombiesInRound) {
         this.round++;
         this.roundLabel.text = this.round;
         this.zombiesSpawned = 0;
-        this.zombiesKilled = 0;
+        this.enemiesKilled = 0;
         this.zombiesInRound =
           Math.round(this.round * 0.15 * this.maxZombies) * 2;
         this.zombieHealth =
@@ -382,6 +395,7 @@ class GamePlay extends Phaser.Scene {
       this.zombieHealth +
       ", " +
       this.zombiesInRound +
-      ", ";*/
+      ", " +
+      time;*/
   }
 }

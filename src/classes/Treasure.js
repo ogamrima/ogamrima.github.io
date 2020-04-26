@@ -1,15 +1,19 @@
-class Treasure extends Phaser.Physics.Arcade.Sprite {
-    constructor(scene, x, y, number) {
-        console.log(x, y, number);
-        super(scene, x, y, scene.treasureColors[number]);
-        this.number = number;
-        scene.add.existing(this);
-        scene.physics.world.enableBody(this);
-        this.setScale(0.5);
-        this.value = (this.number + 1) * 500;
-    }
-    activate() {
-        this.setActive(true);
-        this.setVisible(true);
-    }
+class Treasure extends PickUp {
+  constructor(scene, x, y, number) {
+    super(scene, x, y, scene.treasureColors[number]);
+    this.number = number;
+    this.setScale(0.5);
+    this.value = (this.number + 1) * 50;
+  }
+  activate() {
+    super.activate();
+  }
+
+  pick(multiplier) {
+    this.scene.score += this.value * Math.floor(multiplier);
+    this.scene.scoreLabel.text = this.scene.score;
+    this.scene.multiplier += this.value / 4000;
+    this.scene.multiplierChange();
+    super.pick();
+  }
 }

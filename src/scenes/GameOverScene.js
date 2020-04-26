@@ -48,9 +48,9 @@ class GameOverScene extends Phaser.Scene {
 
   secondsToHMS(seconds) {
     let d = Number(seconds);
-    let h = Math.floor(d / 3600);
-    let m = Math.floor((d % 3600) / 60);
-    let s = Math.floor((d % 3600) % 60);
+    let h = String(Math.floor(d / 3600)).padStart(2, "0");
+    let m = String(Math.floor((d % 3600) / 60)).padStart(2, "0");
+    let s = String(Math.floor((d % 3600) % 60)).padStart(2, "0");
     return ` ${h}:${m}:${s}`;
   }
 }

@@ -47,7 +47,7 @@
 
 25/4
 - bullets are spawning at 0,0 (probably correct);
-- multiplier, nukes, lives, dashes wont pass 10x;
+- multiplier, nukes, lives, dashes wont pass 9x;
 - every 200000 points adds 1 life;
 - remove unnecessary variables;
 - add a 0.01 chance a zombie will drop a life on random location on map;
@@ -55,4 +55,8 @@
 - when colliding with a zombie, make him swing (which will kill the player, if still colliding);
 - add different zombies;
 - add a mini boss, which spawns once every five rounds after round 10, he will drop gems;
-- convert the time at gameOverScene to hours:minutes:seconds and pad start it;
+- convert the time at gameOverScene to hours:minutes:seconds and pad start it; DONE
+
+26/4
+- pause time when HIDDEN https://phaser.discourse.group/t/pause-everything-on-tab-switch/6095
+- complete supplies
