@@ -60,3 +60,7 @@
 26/4
 - pause time when HIDDEN https://phaser.discourse.group/t/pause-everything-on-tab-switch/6095
 - complete supplies
+
+27/4
+- more variables are going to go to the datebase
+- get explosion atlas

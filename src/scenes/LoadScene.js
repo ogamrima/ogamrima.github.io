@@ -18,29 +18,40 @@ class LoadScene extends Phaser.Scene {
       frameWidth: 288,
       frameHeight: 311,
     });
+    this.load.spritesheet("explosion", "./assets/explosion.png", {
+      frameWidth: 64,
+      frameHeight: 64,
+    });
     this.colors = ["blue", "green", "grey", "yellow", "orange", "pink"];
     for (let i = 0; i < this.colors.length; i++) {
-      this.load.spritesheet(this.colors[i] + "_gem", "./assets/crystal-qubodup-ccby3-32-" + this.colors[i] + ".png", {
-        frameWidth: 32,
-        frameHeight: 32
-      });
+      this.load.spritesheet(
+        this.colors[i] + "_gem",
+        "./assets/crystal-qubodup-ccby3-32-" + this.colors[i] + ".png",
+        {
+          frameWidth: 32,
+          frameHeight: 32,
+        }
+      );
     }
     this.load.spritesheet("crystal_blue", "./assets/crystal_blue.png", {
       frameWidth: 63,
-      frameHeight: 63
-    })
+      frameHeight: 63,
+    });
+    this.load.atlas("nuke", "./assets/nuke.png", "./assets/nuke.json");
+    this.load.atlas("life", "./assets/heart.png", "./assets/heart.json");
+    this.load.atlas("dash", "./assets/dash.png", "./assets/dash.json");
     this.load.image("red", "./assets/red.png");
     this.load.image("violet", "./assets/violet.png");
     this.load.image("light_blue", "./assets/light_blue.png");
     this.load.image("light_green", "./assets/light_green.png");
-    this.load.image("life", "./assets/life.png");
-    this.load.image("nuke", "./assets/atom.png");
-    this.load.image("dash", "./assets/flash.png");
+    //this.load.image("life", "./assets/life.png");
+    //this.load.image("nuke", "./assets/atom.png");
+    //this.load.image("dash", "./assets/flash.png");
 
     let loadingBar = this.add.graphics({
       fillStyle: {
-        color: 0xffffff
-      }
+        color: 0xffffff,
+      },
     });
 
     /*for (let i = 0; i < 100; i++) {
@@ -52,15 +63,18 @@ class LoadScene extends Phaser.Scene {
 
     this.add.text(20, 20, "Loading game...");
     this.load.on("progress", (percent) => {
-      loadingBar.fillRect(0, this.game.renderer.height / 2, this.game.renderer.width * percent, 50);
-    })
+      loadingBar.fillRect(
+        0,
+        this.game.renderer.height / 2,
+        this.game.renderer.width * percent,
+        50
+      );
+    });
     /*this.load.on("complete", () => {
 
     })*/
-
   }
   create() {
-
     this.anims.create({
       key: "zombie_anim",
       frames: this.anims.generateFrameNumbers("zombie"),
@@ -71,16 +85,40 @@ class LoadScene extends Phaser.Scene {
       key: "crystal_blue_anim",
       frames: this.anims.generateFrameNumbers("crystal_blue"),
       frameRate: 1,
-      repeat: -1
-    })
+      repeat: -1,
+    });
     for (let i = 0; i < this.colors.length; i++) {
       this.anims.create({
         key: this.colors[i] + "_gem_anim",
         frames: this.anims.generateFrameNumbers(this.colors[i] + "_gem"),
         frameRate: 5,
-        repeat: -1
-      })
+        repeat: -1,
+      });
     }
+    //let frameNames = this.textures.get("nuke").getFrameNames();
+    this.anims.create({
+      key: "nuke_anim",
+      frames: this.anims.generateFrameNames("nuke"),
+      frameRate: 2,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "life_anim",
+      frames: this.anims.generateFrameNames("life"),
+      frameRate: 2,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "dash_anim",
+      frames: this.anims.generateFrameNames("dash"),
+      frameRate: 2,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "explosion_anim",
+      frames: this.anims.generateFrameNumbers("explosion"),
+      frameRate: 16,
+    });
     this.scene.start("MenuScene");
   }
 }

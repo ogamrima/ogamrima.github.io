@@ -7,6 +7,14 @@ class Supply extends PickUp {
   }
   activate() {
     super.activate();
+    this.play(this.key + "_anim");
+    if (this.type == 0) {
+      this.setScale(0.2);
+    } else if (this.type == 1) {
+      this.setScale(0.1);
+    } else if (this.type == 2) {
+      this.setScale(0.25);
+    }
   }
   pick() {
     if (this.type == 0) {

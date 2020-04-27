@@ -14,4 +14,8 @@ class Zombie extends Enemy {
   update() {
     super.update();
   }
+
+  explode() {
+    this.scene.zombieKill(this);
+  }
 }

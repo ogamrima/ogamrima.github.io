@@ -18,8 +18,8 @@ class GamePlay extends Phaser.Scene {
 
     this.round = 1;
     this.lives = 3;
-    this.nukes = 0;
-    this.dashes = 0;
+    this.nukes = 3;
+    this.dashes = 3;
     this.score = 0;
     this.kills = 0;
     this.gameOver = false;
@@ -82,6 +82,10 @@ class GamePlay extends Phaser.Scene {
       classType: Gem,
       maxSize: 10,
     });
+    this.supplies = this.physics.add.group({
+      classType: Supply,
+      maxSize: 10,
+    });
 
     this.debugger = this.add
       .text(350, -250, "", {
@@ -125,18 +129,18 @@ class GamePlay extends Phaser.Scene {
       .setAlpha(0.8)
       .setScrollFactor(0, 0);
     this.add
-      .image(-340, -258, "life")
+      .sprite(-340, -258, "life", "heart1.png")
       .setScale(0.125)
       .setAlpha(0.9)
       .setScrollFactor(0, 0);
     this.add
-      .image(-265, -258, "nuke")
-      .setScale(0.04)
+      .sprite(-265, -258, "nuke", "nuke1.png")
+      .setScale(0.075)
       .setAlpha(0.9)
       .setScrollFactor(0, 0);
     this.add
-      .image(-190, -258, "dash")
-      .setScale(0.05)
+      .sprite(-190, -258, "dash", "dash1.png")
+      .setScale(0.2)
       .setAlpha(0.9) /*.setTint(0x0fffff)*/
       .setScrollFactor(0, 0);
     this.multiplierBox = this.add
@@ -192,129 +196,21 @@ class GamePlay extends Phaser.Scene {
       this
     );
     this.physics.add.overlap(this.player, this.gems, this.gemPick, null, this);
+    this.physics.add.overlap(
+      this.player,
+      this.supplies,
+      this.supplyPick,
+      null,
+      this
+    );
 
     this.game.canvas.oncontextmenu = (e) => e.preventDefault();
-  }
-
-  shoot() {
-    let bullet = this.bullets.get();
-    if (bullet) bullet.fire(this.player);
-  }
-
-  died(player) {
-    player.disableBody(true, true);
-    this.lives--;
-    this.livesLabel.text = this.lives;
-    if (this.lives <= 0) {
-      this.gameOver = true;
-      this.scene.start("GameOverScene", {
-        name: this.playerName,
-        round: this.round,
-        score: this.score,
-        kills: this.kills,
-        time: this.time.now - this.timeBefore,
-      });
-    }
-    this.time.addEvent({
-      delay: 1000,
-      callback: this.reset(player),
-      callbackScope: this,
-      loop: false,
+    this.input.keyboard.on("keydown-Q", (e) => {
+      this.nuke();
     });
-  }
-  reset(player) {
-    player.enableBody(true, this.w / 2, this.h / 2, true, true);
-    player.alpha = 0.5;
-    this.multiplier = 1;
-    this.multiplierLabel.text = "1x";
-    this.multiplierChange();
-    this.time.addEvent({
-      delay: 2000,
-      callback: () => {
-        player.alpha = 1;
-      },
-      callbackScope: this,
-      loop: false,
+    this.input.keyboard.on("keydown-E", (e) => {
+      this.dash();
     });
-  }
-  playerGotHit() {
-    if (this.player.alpha < 1) return;
-    this.timesGotHit++;
-    this.died(this.player);
-  }
-
-  treasurePick(player, treasure) {
-    treasure.pick(this.multiplier);
-  }
-
-  gemPick(player, gem) {
-    gem.pick();
-  }
-
-  zombieHit(bullet, zombie) {
-    if (bullet.active && zombie.active) {
-      zombie.health -= this.player.damage;
-      if (zombie.health < 0) {
-        this.enemiesKilled++;
-        this.kills++;
-        this.score += 100 * Math.floor(this.multiplier) * this.weaponMultiplier;
-        this.scoreLabel.text = this.score;
-        zombie.destroy();
-        if (Math.random() > 0.95) {
-          for (let i = 0; i < Phaser.Math.Between(0, 5); i++) {
-            let treasure = this.treasures.get(
-              Phaser.Math.Between(1200, 2000),
-              Phaser.Math.Between(900, 1500),
-              Phaser.Math.Between(0, 3)
-            );
-            if (treasure) {
-              treasure.activate();
-            }
-          }
-        }
-      }
-      bullet.setVisible(false);
-      bullet.piercedThrough++;
-      if (bullet.piercedThrough > this.pierceableNumber) bullet.destroy(true);
-    }
-  }
-
-  multiplierChange() {
-    if (this.multiplier >= 10) {
-      this.multiplier = 9.999;
-    }
-    let decV = (this.multiplier % 1).toFixed(4);
-    let intV = Math.floor(this.multiplier);
-    this.multiplierLabel.text = intV + "x";
-    this.multiplierBar.clear();
-    this.multiplierBar.fillStyle(0xffffff, 1);
-    this.multiplierBar.fillRect(-380, -230, 280 * decV, 10);
-  }
-
-  addZombies(count) {
-    for (let i = 0; i < count; i++) {
-      let x, y;
-      let m = Math.random();
-      if (m <= 0.25) {
-        x = Phaser.Math.Between(0, this.w);
-        y = Phaser.Math.Between(0, 50);
-      } else if (m > 0.25 && m <= 0.5) {
-        x = Phaser.Math.Between(0, this.w);
-        y = Phaser.Math.Between(this.h - 50, this.h);
-      } else if (m > 0.5 && m <= 0.75) {
-        x = Phaser.Math.Between(0, 50);
-        y = Phaser.Math.Between(0, this.h);
-      } else {
-        x = Phaser.Math.Between(this.w - 50, this.w);
-        y = Phaser.Math.Between(0, this.h);
-      }
-      let speed = Phaser.Math.Between(100, 275);
-      let zombie = this.zombies.get(x, y);
-      if (zombie) {
-        this.zombiesSpawned++;
-        zombie.activate(speed, this.zombieHealth);
-      }
-    }
   }
 
   update(time, delta) {
@@ -381,6 +277,8 @@ class GamePlay extends Phaser.Scene {
             gem.activate();
           }
         }
+        let supply = this.supplies.get(1600, 1200, Phaser.Math.Between(0, 2));
+        supply.activate();
       } else {
         if (this.zombiesSpawned < this.zombiesInRound) {
           this.addZombies(1);
@@ -397,5 +295,155 @@ class GamePlay extends Phaser.Scene {
       this.zombiesInRound +
       ", " +
       time;*/
+  }
+
+  shoot() {
+    let bullet = this.bullets.get();
+    if (bullet) bullet.fire(this.player);
+  }
+
+  died(player) {
+    player.disableBody(true, true);
+    this.lives--;
+    this.livesLabel.text = this.lives;
+    if (this.lives <= 0) {
+      this.gameOver = true;
+      this.scene.start("GameOverScene", {
+        name: this.playerName,
+        round: this.round,
+        score: this.score,
+        kills: this.kills,
+        time: this.time.now - this.timeBefore,
+      });
+    }
+    this.time.addEvent({
+      delay: 1000,
+      callback: this.reset(player),
+      callbackScope: this,
+      loop: false,
+    });
+  }
+  reset(player) {
+    player.enableBody(true, this.w / 2, this.h / 2, true, true);
+    player.alpha = 0.5;
+    this.multiplier = 1;
+    this.multiplierLabel.text = "1x";
+    this.multiplierChange();
+    this.time.addEvent({
+      delay: 2000,
+      callback: () => {
+        player.alpha = 1;
+      },
+      callbackScope: this,
+      loop: false,
+    });
+  }
+  playerGotHit() {
+    if (this.player.alpha < 1) return;
+    this.timesGotHit++;
+    this.died(this.player);
+  }
+
+  treasurePick(player, treasure) {
+    treasure.pick(this.multiplier);
+  }
+
+  gemPick(player, gem) {
+    gem.pick();
+  }
+
+  supplyPick(player, supply) {
+    supply.pick();
+  }
+
+  zombieHit(bullet, zombie) {
+    if (bullet.active && zombie.active) {
+      zombie.health -= this.player.damage;
+      if (zombie.health < 0) {
+        this.zombieKill(zombie);
+      }
+      bullet.setVisible(false);
+      bullet.piercedThrough++;
+      if (bullet.piercedThrough > this.pierceableNumber) bullet.destroy(true);
+    }
+  }
+  zombieKill(zombie) {
+    this.enemiesKilled++;
+    this.kills++;
+    this.score += 100 * Math.floor(this.multiplier) * this.weaponMultiplier;
+    this.scoreLabel.text = this.score;
+    zombie.destroy();
+    if (Math.random() > 0.95) {
+      for (let i = 0; i < Phaser.Math.Between(0, 5); i++) {
+        let treasure = this.treasures.get(
+          Phaser.Math.Between(1200, 2000),
+          Phaser.Math.Between(900, 1500),
+          Phaser.Math.Between(0, 3)
+        );
+        if (treasure) {
+          treasure.activate();
+        }
+      }
+    }
+  }
+
+  multiplierChange() {
+    if (this.multiplier >= 10) {
+      this.multiplier = 9.999;
+    }
+    let decV = (this.multiplier % 1).toFixed(4);
+    let intV = Math.floor(this.multiplier);
+    this.multiplierLabel.text = intV + "x";
+    this.multiplierBar.clear();
+    this.multiplierBar.fillStyle(0xffffff, 1);
+    this.multiplierBar.fillRect(-380, -230, 280 * decV, 10);
+  }
+
+  addZombies(count) {
+    for (let i = 0; i < count; i++) {
+      let x, y;
+      let m = Math.random();
+      if (m <= 0.25) {
+        x = Phaser.Math.Between(0, this.w);
+        y = Phaser.Math.Between(0, 50);
+      } else if (m > 0.25 && m <= 0.5) {
+        x = Phaser.Math.Between(0, this.w);
+        y = Phaser.Math.Between(this.h - 50, this.h);
+      } else if (m > 0.5 && m <= 0.75) {
+        x = Phaser.Math.Between(0, 50);
+        y = Phaser.Math.Between(0, this.h);
+      } else {
+        x = Phaser.Math.Between(this.w - 50, this.w);
+        y = Phaser.Math.Between(0, this.h);
+      }
+      let speed = Phaser.Math.Between(100, 275);
+      let zombie = this.zombies.get(x, y);
+      if (zombie) {
+        this.zombiesSpawned++;
+        zombie.activate(speed, this.zombieHealth);
+      }
+    }
+  }
+
+  dash(player) {
+    if (this.dashes > 0) {
+      this.dashes--;
+      player.dash();
+    }
+  }
+
+  nuke() {
+    if (this.nukes > 0) {
+      this.nukes--;
+      this.nukesLabel.text = this.nukes;
+      for (let i = 0; i < this.zombies.getChildren().length; i++) {
+        let explosion = new Explosion(
+          this,
+          this.zombies.getChildren()[i].x,
+          this.zombies.getChildren()[i].y
+        );
+        this.zombies.getChildren()[i].explode();
+      }
+    }
   }
 }
