@@ -61,6 +61,23 @@ class GamePlay extends Phaser.Scene {
   }
   preload() {}
   create() {
+    this.model = this.sys.game.globals.model;
+    this.sound.pauseOnBlur = false;
+    if (this.model.gameMusicOn) {
+      this.model.gameMusicPlaying = true;
+      this.gameSound = this.sound.add("bg");
+      let musicConfig = {
+        mute: false,
+        volume: 0.25,
+        rate: 1,
+        detune: 0,
+        seek: 0,
+        loop: true,
+        delay: 0,
+      };
+      this.gameSound.play(musicConfig);
+      this.sys.game.globals.gameMusic = this.gameSound;
+    }
     this.background = this.add.image(this.w / 2, this.h / 2, "background");
     this.player = new Player(this, this.w / 2, this.h / 2, "player", 200, 400);
 
@@ -308,6 +325,7 @@ class GamePlay extends Phaser.Scene {
     this.livesLabel.text = this.lives;
     if (this.lives <= 0) {
       this.gameOver = true;
+      this.sound.stopAll();
       this.scene.start("GameOverScene", {
         name: this.playerName,
         round: this.round,

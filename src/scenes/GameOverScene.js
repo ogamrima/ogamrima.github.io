@@ -44,6 +44,12 @@ class GameOverScene extends Phaser.Scene {
     this.add.text(400, 300, this.score, this.styleConfig);
     this.add.text(500, 300, this.kills, this.styleConfig);
     this.add.text(600, 300, this.timeSurvived, this.styleConfig);
+
+    this.backButton = this.add.image(100, 500, "back");
+    this.backButton.setInteractive();
+    this.backButton.on("pointerup", () => {
+      this.scene.start("MenuScene");
+    });
   }
 
   secondsToHMS(seconds) {

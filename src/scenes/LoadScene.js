@@ -8,6 +8,8 @@ class LoadScene extends Phaser.Scene {
   preload() {
     this.load.image("menu_bg", "./assets/menu.png");
     this.load.image("logo", "./assets/logo.png");
+    this.load.audio("bg", ["./assets/audio/bg.ogg", "./assets/audio/bg.mp3"]);
+    this.load.audio("menu_music", "./assets/audio/menu.mp3");
     this.load.image("play_button", "./assets/play_button.png");
     this.load.image("options_button", "./assets/options_button.png");
     this.load.image("background", "./assets/map2.png");
@@ -44,6 +46,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image("violet", "./assets/violet.png");
     this.load.image("light_blue", "./assets/light_blue.png");
     this.load.image("light_green", "./assets/light_green.png");
+    this.load.image("back", "./assets/back.png");
     //this.load.image("life", "./assets/life.png");
     //this.load.image("nuke", "./assets/atom.png");
     //this.load.image("dash", "./assets/flash.png");

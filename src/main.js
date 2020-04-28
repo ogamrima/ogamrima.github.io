@@ -1,4 +1,5 @@
 /** @type{import("../typings/phaser")} */
+import Model from "./classes/Model.js";
 
 let config = {
   type: Phaser.AUTO,
@@ -17,4 +18,12 @@ let config = {
   scene: [LoadScene, MenuScene, OptionsScene, GamePlay, GameOverScene],
 };
 
-let game = new Phaser.Game(config);
+class Game extends Phaser.Game {
+  constructor(config) {
+    super(config);
+    const model = new Model();
+    this.globals = { model, menuMusic: null, gameMusic: null };
+    this.scene.start("LoadScene");
+  }
+}
+window.game = new Game(config);
