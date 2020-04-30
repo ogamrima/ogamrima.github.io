@@ -12,7 +12,7 @@ class LoadScene extends Phaser.Scene {
     this.load.audio("menu_music", "./assets/audio/menu.mp3");
     this.load.image("play_button", "./assets/play_button.png");
     this.load.image("options_button", "./assets/options_button.png");
-    this.load.image("background", "./assets/map2.png");
+    this.load.image("background", "./assets/level1.png");
     this.load.image("player", "./assets/character.png");
     this.load.image("bullet", "./assets/red.png");
     this.load.image("blast", "./assets/blast.png");
@@ -50,6 +50,8 @@ class LoadScene extends Phaser.Scene {
     //this.load.image("life", "./assets/life.png");
     //this.load.image("nuke", "./assets/atom.png");
     //this.load.image("dash", "./assets/flash.png");
+    this.load.image("terrain", "./assets/maps/terrain.png");
+    this.load.tilemapTiledJSON("level1Map", "./assets/maps/level1.json");
 
     let loadingBar = this.add.graphics({
       fillStyle: {

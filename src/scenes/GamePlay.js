@@ -52,6 +52,7 @@ class GamePlay extends Phaser.Scene {
     this.timeBetweenRounds = 10000;
     this.timesGotHit = 0;
     this.timeBefore = null;
+    this.lavaDamage = 50;
 
     this.treasureColors = ["violet", "red", "light_blue", "light_green"];
     this.gemColors = ["blue", "green", "grey", "yellow", "orange", "pink"];
@@ -78,7 +79,39 @@ class GamePlay extends Phaser.Scene {
       this.gameSound.play(musicConfig);
       this.sys.game.globals.gameMusic = this.gameSound;
     }
-    this.background = this.add.image(this.w / 2, this.h / 2, "background");
+
+    let level1Map = this.add.tilemap("level1Map");
+    let terrain = level1Map.addTilesetImage("terrain");
+    let botLayer = level1Map
+      .createStaticLayer("bot", [terrain], 0, 0)
+      .setDepth(-1);
+    let topLayer = level1Map.createStaticLayer("top", [terrain], 0, 0);
+
+    topLayer.setCollisionByProperty({ collides: true });
+    topLayer.setTileIndexCallback(
+      [
+        261,
+        262,
+        263,
+        282,
+        283,
+        284,
+        303,
+        304,
+        305,
+        324,
+        325,
+        326,
+        345,
+        346,
+        347,
+      ],
+      this.lavaHit,
+      this
+    );
+    /*this.background = this.add
+      .image(this.w / 2, this.h / 2, "background")
+      .setScale(2);*/
     this.player = new Player(this, this.w / 2, this.h / 2, "player", 200, 400);
 
     this.bullets = this.physics.add.group({
@@ -190,6 +223,17 @@ class GamePlay extends Phaser.Scene {
     this.cameras.main.startFollow(this.player, true);
     this.cameras.main.setBounds(0, 0, this.w, this.h);
 
+    this.physics.add.overlap(this.player, topLayer);
+    this.physics.add.overlap(this.zombies, topLayer);
+    this.physics.add.collider(this.player, topLayer);
+    this.physics.add.collider(this.zombies, topLayer);
+    this.physics.add.collider(
+      this.bullets,
+      topLayer,
+      this.bulletHitsWall,
+      null,
+      this
+    );
     this.physics.add.collider(this.zombies);
     this.physics.add.collider(
       this.bullets,
@@ -231,6 +275,7 @@ class GamePlay extends Phaser.Scene {
   }
 
   update(time, delta) {
+    this.player.health++;
     this.player.setVelocity(0);
     if (this.mouse.isDown && time > this.lastFired) {
       if (!this.player.active) return;
@@ -359,7 +404,8 @@ class GamePlay extends Phaser.Scene {
   playerGotHit() {
     if (this.player.alpha < 1) return;
     this.timesGotHit++;
-    this.died(this.player);
+    this.player.health -= 10;
+    if (this.player.health < 0) this.died(this.player);
   }
 
   treasurePick(player, treasure) {
@@ -372,6 +418,23 @@ class GamePlay extends Phaser.Scene {
 
   supplyPick(player, supply) {
     supply.pick();
+  }
+  bulletHitsWall(bullet, topLayer) {
+    bullet.destroy(true);
+  }
+  lavaHit(sprite, tile) {
+    //console.log(1);
+    sprite.health -= this.lavaDamage;
+    if (sprite.name == "player") {
+      if (sprite.health < 0) {
+        this.died(this.player);
+      }
+    } else if (sprite.name == "zombie") {
+      if (sprite.health < 0) {
+        this.enemiesKilled++;
+        sprite.destroy();
+      }
+    }
   }
 
   zombieHit(bullet, zombie) {

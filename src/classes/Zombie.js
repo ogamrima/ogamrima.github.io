@@ -4,6 +4,7 @@ class Zombie extends Enemy {
     this.play("zombie_anim", true);
     this.setScale(0.25);
     this.body.setSize(130, 130).setOffset(80, 90);
+    this.name = "zombie";
     //this.setBounce(2);
   }
 
