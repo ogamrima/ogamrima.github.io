@@ -5,6 +5,7 @@ class Treasure extends PickUp {
     this.setScale(0.5);
     this.value = (this.number + 1) * 50;
   }
+  create() {}
   activate() {
     super.activate();
   }

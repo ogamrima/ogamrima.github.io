@@ -50,6 +50,18 @@ class GameOverScene extends Phaser.Scene {
     this.backButton.on("pointerup", () => {
       this.scene.start("MenuScene");
     });
+    this.restartButton = this.add.image(600, 500, "restart").setScale(0.5);
+    this.restartButton.setInteractive();
+    this.restartButton.on("pointerup", () => {
+      let gameScene = this.scene.get("GamePlay");
+      //this.scene.restart();
+      gameScene.registry.destroy();
+      gameScene.events.off();
+      gameScene.scene.restart({
+        timeBefore: this.time.now,
+      });
+      this.scene.stop();
+    });
   }
 
   secondsToHMS(seconds) {

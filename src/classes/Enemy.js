@@ -7,6 +7,7 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     this.health = null;
   }
 
+  create() {}
   activate(speed, health) {
     this.setActive(true);
     this.setVisible(true);
@@ -23,8 +24,9 @@ class Enemy extends Phaser.Physics.Arcade.Sprite {
     );
     this.scene.physics.velocityFromRotation(
       this.rotation,
-      this.speed,
+      this.speed * this.speedConstant,
       this.body.velocity
     );
+    this.speedConstant = 1;
   }
 }

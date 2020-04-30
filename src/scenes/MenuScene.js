@@ -48,9 +48,14 @@ class MenuScene extends Phaser.Scene {
     playButton.on("pointerup", () => {
       this.model.menuMusicPlaying = false;
       this.sound.stopAll();
-      this.scene.start("GamePlay", {
+      let gameScene = this.scene.get("GamePlay");
+      //this.scene.restart();
+      gameScene.registry.destroy();
+      gameScene.events.off();
+      gameScene.scene.restart({
         timeBefore: this.time.now,
       });
+      this.scene.stop();
     });
 
     optionsButton.on("pointerover", () => {

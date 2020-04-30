@@ -15,7 +15,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image("background", "./assets/level1.png");
     this.load.image("player", "./assets/character.png");
     this.load.image("bullet", "./assets/red.png");
-    this.load.image("blast", "./assets/blast.png");
+    this.load.image("blast", "./assets/bullet.png");
     this.load.spritesheet("zombie", "./assets/zombie.png", {
       frameWidth: 288,
       frameHeight: 311,
@@ -47,6 +47,7 @@ class LoadScene extends Phaser.Scene {
     this.load.image("light_blue", "./assets/light_blue.png");
     this.load.image("light_green", "./assets/light_green.png");
     this.load.image("back", "./assets/back.png");
+    this.load.image("restart", "./assets/restart.png");
     //this.load.image("life", "./assets/life.png");
     //this.load.image("nuke", "./assets/atom.png");
     //this.load.image("dash", "./assets/flash.png");

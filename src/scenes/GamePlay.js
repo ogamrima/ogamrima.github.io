@@ -3,6 +3,12 @@ class GamePlay extends Phaser.Scene {
     super({
       key: "GamePlay",
     });
+  }
+  init(data) {
+    this.timeBefore = data.timeBefore;
+  }
+  preload() {}
+  create() {
     this.playerName = "ogamrima";
     this.w = 3200;
     this.h = 2400;
@@ -41,7 +47,7 @@ class GamePlay extends Phaser.Scene {
     this.fireRate = 50;
     this.magazine = 20;
     this.maxZombies = 24;
-    this.zombiesInRound = 1;
+    this.zombiesInRound = 10;
     this.zombiesSpawned = 0;
     this.enemiesKilled = 0;
     this.zombieHealth = 150;
@@ -52,16 +58,11 @@ class GamePlay extends Phaser.Scene {
     this.timeBetweenRounds = 10000;
     this.timesGotHit = 0;
     this.timeBefore = null;
-    this.lavaDamage = 50;
+    this.lavaDamage = 5;
+    this.playerHealth = 100;
 
     this.treasureColors = ["violet", "red", "light_blue", "light_green"];
     this.gemColors = ["blue", "green", "grey", "yellow", "orange", "pink"];
-  }
-  init(data) {
-    this.timeBefore = data.timeBefore;
-  }
-  preload() {}
-  create() {
     this.model = this.sys.game.globals.model;
     this.sound.pauseOnBlur = false;
     if (this.model.gameMusicOn) {
@@ -107,6 +108,11 @@ class GamePlay extends Phaser.Scene {
         347,
       ],
       this.lavaHit,
+      this
+    );
+    topLayer.setTileIndexCallback(
+      [18, 19, 20, 39, 40, 41, 60, 61, 62, 81, 82, 83, 102, 103, 104],
+      this.waterHit,
       this
     );
     /*this.background = this.add
@@ -272,10 +278,30 @@ class GamePlay extends Phaser.Scene {
     this.input.keyboard.on("keydown-E", (e) => {
       this.dash();
     });
+
+    this.input.on("pointerdown", (pointer) => {
+      let tile = level1Map.getTileAt(
+        level1Map.worldToTileX(pointer.x),
+        level1Map.worldToTileY(pointer.y)
+      );
+      if (tile) {
+        console.log(tile);
+      }
+    });
+
+    /*document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") {
+        this.scene.run();
+      }
+      if (document.visibilityState === "hidden") {
+        this.scene.pause();
+      }
+      console.log(document.visibilityState);
+    });*/
   }
 
   update(time, delta) {
-    this.player.health++;
+    if (this.player.health <= this.playerHealth) this.player.health++;
     this.player.setVelocity(0);
     if (this.mouse.isDown && time > this.lastFired) {
       if (!this.player.active) return;
@@ -348,7 +374,11 @@ class GamePlay extends Phaser.Scene {
         }
       }
     }
-    this.player.body.velocity.normalize().scale(this.speed);
+    this.player.body.velocity
+      .normalize()
+      .scale(this.speed * this.player.speedConstant);
+
+    this.player.speedConstant = 1;
     /*this.debugger.text =
       this.zombies.countActive() +
       ", " +
@@ -371,6 +401,7 @@ class GamePlay extends Phaser.Scene {
     if (this.lives <= 0) {
       this.gameOver = true;
       this.sound.stopAll();
+      //this.cameras.main.fade(1000);
       this.scene.start("GameOverScene", {
         name: this.playerName,
         round: this.round,
@@ -389,6 +420,7 @@ class GamePlay extends Phaser.Scene {
   reset(player) {
     player.enableBody(true, this.w / 2, this.h / 2, true, true);
     player.alpha = 0.5;
+    player.health = this.playerHealth;
     this.multiplier = 1;
     this.multiplierLabel.text = "1x";
     this.multiplierChange();
@@ -424,16 +456,26 @@ class GamePlay extends Phaser.Scene {
   }
   lavaHit(sprite, tile) {
     //console.log(1);
-    sprite.health -= this.lavaDamage;
+
     if (sprite.name == "player") {
+      sprite.health -= this.lavaDamage;
       if (sprite.health < 0) {
         this.died(this.player);
       }
     } else if (sprite.name == "zombie") {
+      sprite.health -= this.lavaDamage;
       if (sprite.health < 0) {
         this.enemiesKilled++;
         sprite.destroy();
       }
+    }
+  }
+
+  waterHit(sprite, tile) {
+    if (sprite.name == "player") {
+      sprite.speedConstant = 0.5;
+    } else if (sprite.name == "zombie") {
+      sprite.speedConstant = 0.5;
     }
   }
 
@@ -454,6 +496,17 @@ class GamePlay extends Phaser.Scene {
     this.score += 100 * Math.floor(this.multiplier) * this.weaponMultiplier;
     this.scoreLabel.text = this.score;
     zombie.destroy();
+    if (Math.random() > 0.99) {
+      let life = this.supplies.get(
+        Phaser.Math.Between(1200, 2000),
+        Phaser.Math.Between(900, 1500),
+        0
+      );
+      if (life) {
+        life.activate();
+      }
+    }
+
     if (Math.random() > 0.95) {
       for (let i = 0; i < Phaser.Math.Between(0, 5); i++) {
         let treasure = this.treasures.get(
@@ -497,7 +550,10 @@ class GamePlay extends Phaser.Scene {
         x = Phaser.Math.Between(this.w - 50, this.w);
         y = Phaser.Math.Between(0, this.h);
       }
-      let speed = Phaser.Math.Between(100, 275);
+      let speed = Phaser.Math.Between(
+        100 + this.round * 3,
+        275 + this.round * 2
+      );
       let zombie = this.zombies.get(x, y);
       if (zombie) {
         this.zombiesSpawned++;
@@ -515,6 +571,7 @@ class GamePlay extends Phaser.Scene {
 
   nuke() {
     if (this.nukes > 0) {
+      this.cameras.main.shake(500);
       this.nukes--;
       this.nukesLabel.text = this.nukes;
       for (let i = 0; i < this.zombies.getChildren().length; i++) {

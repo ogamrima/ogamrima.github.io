@@ -7,6 +7,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
     this.setScale(0.25);
     this.setOrigin(0.4, 0.45);
     this.name = "player";
+    this.speedConstant = 1;
     //this.setImmovable();
     this.body.setCircle(50, 50, 20);
     //this.play("player_anim", true);

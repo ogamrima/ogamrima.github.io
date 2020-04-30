@@ -5,8 +5,11 @@ class Zombie extends Enemy {
     this.setScale(0.25);
     this.body.setSize(130, 130).setOffset(80, 90);
     this.name = "zombie";
+    this.speedConstant = 1;
+
     //this.setBounce(2);
   }
+  create() {}
 
   activate(speed, health) {
     super.activate(speed, health);

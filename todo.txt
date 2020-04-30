@@ -3,24 +3,24 @@
 12/4
 - on new round update this.zombieHealth; DONE
 - use the same method as lastFired for zombie spawns; DONE
-- add tile map with obstacles;
+- add tile map with obstacles; DONE
 - spawn 1 zombie every {spawntime}seconds while there are not 24 zombies at the moment; DONE
 - add gameOver state; DONE
 
 13/4
-- add power ups;
+- add power ups; 
 - add performance friendly piercing through zombies; DONE
 - add score label, nuke count, dashes count (teleporting); DONE
 - set tint and thickness for powered up gun bullets;
 - check fps;
-- take damage when the player and a zombie collide for 1s;
+- take damage when the player and a zombie collide for 1s; TRIED
 - fix bullets not hiting enemies when they are spawned in zombie body;
 
 17/4
 - add GameOverScene; DONE
 
 19/4
-- make OptionsScene;
+- make OptionsScene; 
 
 20/4
 - add sound to everything (menu, buttons, shooting, etc.);
@@ -29,7 +29,7 @@
 
 22/4
 - make bullets go through zombies and hit multiple before bullet gets destroyed; DONE
-- get a nice tile set;
+- get a nice tile set; DONE
 
 23/4
 - add mulitplier bar; DONE
@@ -52,7 +52,7 @@
 - remove unnecessary variables;
 - add a 0.01 chance a zombie will drop a life on random location on map;
 - add a room with permanent power up choice (new better gun, faster movement, companion that helps you);
-- when colliding with a zombie, make him swing (which will kill the player, if still colliding);
+- when colliding with a zombie, make him swing (which will kill the player, if still colliding); TRIED
 - add different zombies;
 - add a mini boss, which spawns once every five rounds after round 10, he will drop gems;
 - convert the time at gameOverScene to hours:minutes:seconds and pad start it; DONE
@@ -63,7 +63,7 @@
 
 27/4
 - more variables are going to go to the datebase;
-- get explosion atlas;
+- get explosion atlas; DONE
 - fix nuke;
 - get more atlases;
 
@@ -71,3 +71,8 @@
 - add pause game button;
 - fix bug when after dying and playing again, the player starts with 0 lives;
 - music not starting after going back to menu after dying; DONE
+
+30/4
+- make dash, use !inDash to not be able to walk during dash, make player invincible during and after
+- fix time not being correct
+- make it harder to play and less timely
