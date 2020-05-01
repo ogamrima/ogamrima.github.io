@@ -24,9 +24,10 @@ class Zombie extends Enemy {
   }
 
   died() {
-    //console.log(this.scene.enemiesKilled);
+    //console.log(this);
     this.scene.enemiesKilled++;
     //console.log(this.scene.enemiesKilled);
-    this.destroy();
+    this.dead = true;
+    this.destroy(true);
   }
 }
