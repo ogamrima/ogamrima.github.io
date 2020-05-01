@@ -277,7 +277,7 @@ class GamePlay extends Phaser.Scene {
       this.dash();
     });
 
-    this.input.on("pointerdown", (pointer) => {
+    /*this.input.on("pointerdown", (pointer) => {
       let tile = level1Map.getTileAt(
         level1Map.worldToTileX(pointer.x),
         level1Map.worldToTileY(pointer.y)
@@ -285,7 +285,7 @@ class GamePlay extends Phaser.Scene {
       if (tile) {
         console.log(tile);
       }
-    });
+    });*/
 
     /*document.addEventListener("visibilitychange", () => {
       if (document.visibilityState === "visible") {
@@ -456,15 +456,15 @@ class GamePlay extends Phaser.Scene {
   lavaHit(sprite, tile) {
     //console.log(1);
 
-    if (sprite.name == "player") {
+    if (sprite.name == "zombie") {
+      sprite.health -= this.lavaDamage;
+      if (sprite.health <= 0 && !sprite.dead) {
+        sprite.died();
+      }
+    } else if (sprite.name == "player") {
       sprite.health -= this.lavaDamage;
       if (sprite.health <= 0) {
         this.died(this.player);
-      }
-    } else if (sprite.name == "zombie") {
-      sprite.health -= this.lavaDamage;
-      if (sprite.health <= 0) {
-        sprite.died();
       }
     }
   }
@@ -583,7 +583,7 @@ class GamePlay extends Phaser.Scene {
             this.zombies.getChildren()[i].y
           );
           this.zombies.getChildren()[i].explode();
-          console.log(this.enemiesKilled);
+          //console.log(this.enemiesKilled);
         }
       }
       /*this.zombies.getChildren().forEach((zombie) => {
