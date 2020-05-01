@@ -50,7 +50,7 @@
 - multiplier, nukes, lives, dashes wont pass 9x; DONE
 - every 200000 points adds 1 life;
 - remove unnecessary variables;
-- add a 0.01 chance a zombie will drop a life on random location on map;
+- add a 0.01 chance a zombie will drop a life on random location on map; DONE
 - add a room with permanent power up choice (new better gun, faster movement, companion that helps you);
 - when colliding with a zombie, make him swing (which will kill the player, if still colliding); TRIED
 - add different zombies;
@@ -75,7 +75,8 @@
 30/4
 - make dash, use !inDash to not be able to walk during dash, make player invincible during and after;
 - fix time not being correct; DONE
-- make it harder to play and less timely;
+- make it harder to play and less timely; DONE
 
 1/5
-- remove debug mode
+- remove debug mode; DONE
+- make the options settings be bound to browser (like cookies, maybe use registry)

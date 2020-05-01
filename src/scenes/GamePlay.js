@@ -16,11 +16,11 @@ class GamePlay extends Phaser.Scene {
     this.mouseX = 0;
     this.mouseY = 0;
 
-    this.zombies = null;
+    /*this.zombies = null;
     this.bullets = null;
     this.treasures = null;
     this.gems = null;
-    this.supplies = null;
+    this.supplies = null;*/
 
     this.round = 1;
     this.lives = 3;
@@ -31,7 +31,7 @@ class GamePlay extends Phaser.Scene {
     this.gameOver = false;
     this.multiplier = 1;
     this.weaponMultiplier = 1;
-    this.multiplierBox = null;
+    /*this.multiplierBox = null;
     this.multiplierBar = null;
 
     this.scoreLabel = null;
@@ -41,11 +41,10 @@ class GamePlay extends Phaser.Scene {
     this.multiplierLabel = null;
     this.nameLabel = null;
     this.roundLabel = null;
-    this.debugger = null;
+    this.debugger = null;*/
 
     this.lastFired = 0;
     this.fireRate = 50;
-    this.magazine = 20;
     this.zombiesInRound = 14;
     this.zombiesSpawned = 0;
     this.enemiesKilled = 0;
@@ -54,8 +53,6 @@ class GamePlay extends Phaser.Scene {
     this.zombieSpawnRate = 500;
     this.lastSpawn = 0;
     this.timeBetweenRounds = 10000;
-    this.timesGotHit = 0;
-    //this.timeBefore = null;
     this.lavaDamage = 5;
     this.playerHealth = 100;
 
@@ -80,7 +77,14 @@ class GamePlay extends Phaser.Scene {
     }
 
     let level1Map = this.add.tilemap("level1Map");
-    let terrain = level1Map.addTilesetImage("terrain");
+    let terrain = level1Map.addTilesetImage(
+      "terrain",
+      "ex_terrain",
+      32,
+      32,
+      1,
+      2
+    );
     let botLayer = level1Map
       .createStaticLayer("bot", [terrain], 0, 0)
       .setDepth(-1);
@@ -159,42 +163,49 @@ class GamePlay extends Phaser.Scene {
       color: "#ffffff",
     };
 
+    this.add
+      .image(-400, -300, "tp_bg")
+      .setScale(0.185, 0.1)
+      .setOrigin(0, 0)
+      .setScrollFactor(0, 0);
+
     this.livesLabel = this.add
-      .text(-375, -275, this.lives, this.styleConfig)
+      .text(-375, -285, this.lives, this.styleConfig)
       .setScrollFactor(0, 0);
     this.nukesLabel = this.add
-      .text(-300, -275, this.nukes, this.styleConfig)
+      .text(-300, -285, this.nukes, this.styleConfig)
       .setScrollFactor(0, 0);
     this.dashesLabel = this.add
-      .text(-225, -275, this.dashes, this.styleConfig)
+      .text(-225, -285, this.dashes, this.styleConfig)
       .setScrollFactor(0, 0);
     this.scoreLabel = this.add
-      .text(-150, -275, this.score, this.styleConfig)
+      .text(-150, -285, this.score, this.styleConfig)
       .setScrollFactor(0, 0);
     this.multiplierLabel = this.add
-      .text(-85, -240, this.multiplier + "x", this.styleConfig)
+      .text(-85, -250, this.multiplier + "x", this.styleConfig)
       .setScrollFactor(0, 0);
     this.nameLabel = this.add
-      .text(-375, -200, this.playerName, {
+      .text(-375, -235, this.playerName, {
         fontSize: "22px",
         fontFamily: "Tahoma",
         color: "#ffffff",
       })
       .setAlpha(0.8)
       .setScrollFactor(0, 0);
+
     this.add
-      .sprite(-340, -258, "life", "heart1.png")
+      .sprite(-340, -268, "life", "heart1.png")
       .setScale(0.125)
       .setAlpha(0.9)
       .setScrollFactor(0, 0);
     this.add
-      .sprite(-265, -258, "nuke", "nuke1.png")
-      .setScale(0.075)
+      .sprite(-265, -268, "nuke", "nuke1.png")
+      .setScale(0.07)
       .setAlpha(0.9)
       .setScrollFactor(0, 0);
     this.add
-      .sprite(-190, -258, "dash", "dash1.png")
-      .setScale(0.2)
+      .sprite(-190, -268, "dash", "dash1.png")
+      .setScale(0.175)
       .setAlpha(0.9) /*.setTint(0x0fffff)*/
       .setScrollFactor(0, 0);
     this.multiplierBox = this.add
@@ -205,7 +216,7 @@ class GamePlay extends Phaser.Scene {
         },
       })
       .setScrollFactor(0, 0);
-    this.multiplierBox.fillRect(-380, -230, 280, 10);
+    this.multiplierBox.fillRect(-380, -245, 280, 10);
     this.multiplierBar = this.add
       .graphics({
         fillStyle: {
@@ -223,6 +234,7 @@ class GamePlay extends Phaser.Scene {
     });
 
     this.physics.world.setBounds(0, 0, this.w, this.h);
+    this.cameras.main.roundPixels = true;
     this.cameras.main.zoom = 0.5;
     this.cameras.main.startFollow(this.player, true);
     this.cameras.main.setBounds(0, 0, this.w, this.h);
@@ -378,14 +390,14 @@ class GamePlay extends Phaser.Scene {
       .scale(this.speed * this.player.speedConstant);
 
     this.player.speedConstant = 1;
-    this.debugger.text =
+    /*this.debugger.text =
       this.zombies.countActive() +
       ", " +
       this.zombieHealth +
       ", " +
       this.zombiesInRound +
       ", " +
-      time;
+      time;*/
   }
 
   shoot() {
@@ -434,7 +446,6 @@ class GamePlay extends Phaser.Scene {
   }
   playerGotHit() {
     if (this.player.alpha < 1) return;
-    this.timesGotHit++;
     this.player.health -= 10;
     if (this.player.health <= 0) this.died(this.player);
   }
@@ -528,7 +539,7 @@ class GamePlay extends Phaser.Scene {
     this.multiplierLabel.text = intV + "x";
     this.multiplierBar.clear();
     this.multiplierBar.fillStyle(0xffffff, 1);
-    this.multiplierBar.fillRect(-380, -230, 280 * decV, 10);
+    this.multiplierBar.fillRect(-380, -245, 280 * decV, 10);
   }
 
   addZombies(count) {

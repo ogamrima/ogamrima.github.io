@@ -42,6 +42,7 @@ class LoadScene extends Phaser.Scene {
     this.load.atlas("nuke", "./assets/nuke.png", "./assets/nuke.json");
     this.load.atlas("life", "./assets/heart.png", "./assets/heart.json");
     this.load.atlas("dash", "./assets/dash.png", "./assets/dash.json");
+    this.load.image("tp_bg", "./assets/supplies_background.png");
     this.load.image("red", "./assets/red.png");
     this.load.image("violet", "./assets/violet.png");
     this.load.image("light_blue", "./assets/light_blue.png");
@@ -52,6 +53,7 @@ class LoadScene extends Phaser.Scene {
     //this.load.image("nuke", "./assets/atom.png");
     //this.load.image("dash", "./assets/flash.png");
     this.load.image("terrain", "./assets/maps/terrain.png");
+    this.load.image("ex_terrain", "./assets/maps/terrain-extruded.png");
     this.load.tilemapTiledJSON("level1Map", "./assets/maps/level1.json");
 
     let loadingBar = this.add.graphics({
@@ -67,12 +69,16 @@ class LoadScene extends Phaser.Scene {
       })
     }*/
 
-    this.add.text(20, 20, "Loading game...");
+    this.add.text(
+      this.game.renderer.width / 2 - 20,
+      this.game.renderer.height / 1.35,
+      "Loading..."
+    );
     this.load.on("progress", (percent) => {
       loadingBar.fillRect(
-        0,
-        this.game.renderer.height / 2,
-        this.game.renderer.width * percent,
+        50,
+        this.game.renderer.height / 1.25,
+        (this.game.renderer.width - 100) * percent,
         50
       );
     });
