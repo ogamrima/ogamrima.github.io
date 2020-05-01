@@ -46,7 +46,7 @@
 - use time events for spawning and all kind of stuff; TRIED
 
 25/4
-- bullets are spawning at 0,0 (probably correct);
+- bullets are spawning at 0,0 (probably correct); TRIED
 - multiplier, nukes, lives, dashes wont pass 9x; DONE
 - every 200000 points adds 1 life;
 - remove unnecessary variables;
@@ -64,15 +64,18 @@
 27/4
 - more variables are going to go to the datebase;
 - get explosion atlas; DONE
-- fix nuke;
+- fix nuke; DONE
 - get more atlases;
 
 28/4
 - add pause game button;
-- fix bug when after dying and playing again, the player starts with 0 lives;
+- fix bug when after dying and playing again, the player starts with 0 lives; DONE
 - music not starting after going back to menu after dying; DONE
 
 30/4
-- make dash, use !inDash to not be able to walk during dash, make player invincible during and after
-- fix time not being correct
-- make it harder to play and less timely
+- make dash, use !inDash to not be able to walk during dash, make player invincible during and after;
+- fix time not being correct; DONE
+- make it harder to play and less timely;
+
+1/5
+- remove debug mode

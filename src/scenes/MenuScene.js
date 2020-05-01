@@ -52,7 +52,7 @@ class MenuScene extends Phaser.Scene {
       //this.scene.restart();
       gameScene.registry.destroy();
       gameScene.events.off();
-      gameScene.scene.restart({
+      this.scene.start("GamePlay", {
         timeBefore: this.time.now,
       });
       this.scene.stop();

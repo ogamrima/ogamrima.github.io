@@ -22,4 +22,11 @@ class Zombie extends Enemy {
   explode() {
     this.scene.zombieKill(this);
   }
+
+  died() {
+    //console.log(this.scene.enemiesKilled);
+    this.scene.enemiesKilled++;
+    //console.log(this.scene.enemiesKilled);
+    this.destroy();
+  }
 }

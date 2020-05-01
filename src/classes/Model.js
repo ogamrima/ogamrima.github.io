@@ -1,7 +1,7 @@
 export default class Model {
   constructor() {
-    this._menuMusicOn = true;
-    this._gameMusicOn = true;
+    this._menuMusicOn = false;
+    this._gameMusicOn = false;
     this._menuMusicPlaying = false;
     this._gameMusicPlaying = false;
   }

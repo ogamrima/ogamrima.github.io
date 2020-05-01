@@ -46,18 +46,16 @@ class GamePlay extends Phaser.Scene {
     this.lastFired = 0;
     this.fireRate = 50;
     this.magazine = 20;
-    this.maxZombies = 24;
-    this.zombiesInRound = 10;
+    this.zombiesInRound = 14;
     this.zombiesSpawned = 0;
     this.enemiesKilled = 0;
     this.zombieHealth = 150;
-    this.bulletsMaxSize = 30;
     this.pierceableNumber = 3;
-    this.zombieSpawnRate = 1000;
+    this.zombieSpawnRate = 500;
     this.lastSpawn = 0;
     this.timeBetweenRounds = 10000;
     this.timesGotHit = 0;
-    this.timeBefore = null;
+    //this.timeBefore = null;
     this.lavaDamage = 5;
     this.playerHealth = 100;
 
@@ -122,12 +120,12 @@ class GamePlay extends Phaser.Scene {
 
     this.bullets = this.physics.add.group({
       classType: Bullet,
-      maxSize: this.bulletsMaxSize,
+      maxSize: 25,
       runChildUpdate: true,
     });
     this.zombies = this.physics.add.group({
       classType: Zombie,
-      maxSize: this.maxZombies,
+      maxSize: 24,
       runChildUpdate: true,
     });
     this.treasures = this.physics.add.group({
@@ -146,7 +144,7 @@ class GamePlay extends Phaser.Scene {
     this.debugger = this.add
       .text(350, -250, "", {
         font: "25px Arial",
-        fill: "yellow",
+        fill: "red",
       })
       .setScrollFactor(0, 0);
     this.roundLabel = this.add
@@ -336,8 +334,7 @@ class GamePlay extends Phaser.Scene {
         this.roundLabel.text = this.round;
         this.zombiesSpawned = 0;
         this.enemiesKilled = 0;
-        this.zombiesInRound =
-          Math.round(this.round * 0.15 * this.maxZombies) * 2;
+        this.zombiesInRound = Math.round(this.round * 0.15 * 24) * 3;
         this.zombieHealth =
           this.round < 10
             ? this.zombieHealth + 100
@@ -365,11 +362,13 @@ class GamePlay extends Phaser.Scene {
             gem.activate();
           }
         }
-        let supply = this.supplies.get(1600, 1200, Phaser.Math.Between(0, 2));
-        supply.activate();
+        if (Math.random() > 0.8) {
+          let supply = this.supplies.get(1600, 1200, Phaser.Math.Between(0, 2));
+          supply.activate();
+        }
       } else {
         if (this.zombiesSpawned < this.zombiesInRound) {
-          this.addZombies(1);
+          this.addZombies(Phaser.Math.Between(1, 3));
           this.lastSpawn = time + this.zombieSpawnRate;
         }
       }
@@ -379,14 +378,14 @@ class GamePlay extends Phaser.Scene {
       .scale(this.speed * this.player.speedConstant);
 
     this.player.speedConstant = 1;
-    /*this.debugger.text =
+    this.debugger.text =
       this.zombies.countActive() +
       ", " +
       this.zombieHealth +
       ", " +
       this.zombiesInRound +
       ", " +
-      time;*/
+      time;
   }
 
   shoot() {
@@ -437,7 +436,7 @@ class GamePlay extends Phaser.Scene {
     if (this.player.alpha < 1) return;
     this.timesGotHit++;
     this.player.health -= 10;
-    if (this.player.health < 0) this.died(this.player);
+    if (this.player.health <= 0) this.died(this.player);
   }
 
   treasurePick(player, treasure) {
@@ -459,14 +458,13 @@ class GamePlay extends Phaser.Scene {
 
     if (sprite.name == "player") {
       sprite.health -= this.lavaDamage;
-      if (sprite.health < 0) {
+      if (sprite.health <= 0) {
         this.died(this.player);
       }
     } else if (sprite.name == "zombie") {
       sprite.health -= this.lavaDamage;
-      if (sprite.health < 0) {
-        this.enemiesKilled++;
-        sprite.destroy();
+      if (sprite.health <= 0) {
+        sprite.died();
       }
     }
   }
@@ -482,7 +480,7 @@ class GamePlay extends Phaser.Scene {
   zombieHit(bullet, zombie) {
     if (bullet.active && zombie.active) {
       zombie.health -= this.player.damage;
-      if (zombie.health < 0) {
+      if (zombie.health <= 0) {
         this.zombieKill(zombie);
       }
       bullet.setVisible(false);
@@ -496,11 +494,11 @@ class GamePlay extends Phaser.Scene {
     this.score += 100 * Math.floor(this.multiplier) * this.weaponMultiplier;
     this.scoreLabel.text = this.score;
     zombie.destroy();
-    if (Math.random() > 0.99) {
+    if (Math.random() > 0.993) {
       let life = this.supplies.get(
         Phaser.Math.Between(1200, 2000),
         Phaser.Math.Between(900, 1500),
-        0
+        Phaser.Math.Between(0, 2)
       );
       if (life) {
         life.activate();
@@ -535,6 +533,7 @@ class GamePlay extends Phaser.Scene {
 
   addZombies(count) {
     for (let i = 0; i < count; i++) {
+      if (this.zombiesSpawned >= this.zombiesInRound) return;
       let x, y;
       let m = Math.random();
       if (m <= 0.25) {
@@ -551,8 +550,8 @@ class GamePlay extends Phaser.Scene {
         y = Phaser.Math.Between(0, this.h);
       }
       let speed = Phaser.Math.Between(
-        100 + this.round * 3,
-        275 + this.round * 2
+        125 + this.round * 3,
+        300 + this.round * 2
       );
       let zombie = this.zombies.get(x, y);
       if (zombie) {
@@ -574,14 +573,23 @@ class GamePlay extends Phaser.Scene {
       this.cameras.main.shake(500);
       this.nukes--;
       this.nukesLabel.text = this.nukes;
-      for (let i = 0; i < this.zombies.getChildren().length; i++) {
-        let explosion = new Explosion(
-          this,
-          this.zombies.getChildren()[i].x,
-          this.zombies.getChildren()[i].y
-        );
-        this.zombies.getChildren()[i].explode();
+      let l = this.zombies.getChildren().length;
+      //console.log(this.zombies.getChildren().length);
+      for (let i = l; i >= 0; i--) {
+        if (this.zombies.getChildren()[i]) {
+          let explosion = new Explosion(
+            this,
+            this.zombies.getChildren()[i].x,
+            this.zombies.getChildren()[i].y
+          );
+          this.zombies.getChildren()[i].explode();
+          console.log(this.enemiesKilled);
+        }
       }
+      /*this.zombies.getChildren().forEach((zombie) => {
+        let explosion = new Explosion(this, zombie.x, zombie.y);
+        zombie.explode();
+      });*/
     }
   }
 }

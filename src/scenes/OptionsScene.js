@@ -45,7 +45,8 @@ class OptionsScene extends Phaser.Scene {
   }
   updateAudio() {
     if (!this.model.menuMusicOn) {
-      this.sys.game.globals.menuMusic.stop();
+      if (this.sys.game.globals.menuMusic)
+        this.sys.game.globals.menuMusic.stop();
       this.model.menuMusicPlaying = false;
     } else {
       if (!this.model.menuMusicPlaying) {
